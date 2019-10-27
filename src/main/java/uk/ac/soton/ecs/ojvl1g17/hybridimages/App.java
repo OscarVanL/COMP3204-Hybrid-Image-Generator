@@ -46,5 +46,7 @@ public class App {
 
         MBFImage image1 = images.get(0);
         MBFImage image2 = images.get(1);
+
+        MyHybridImages.makeHybrid(image1, 0.5f, image2, 0.5f);
     }
 }
