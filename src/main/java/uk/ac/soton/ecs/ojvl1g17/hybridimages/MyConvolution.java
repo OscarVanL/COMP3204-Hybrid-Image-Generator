@@ -23,19 +23,20 @@ public class MyConvolution implements SinglebandImageProcessor<Float, FImage> {
         // of your temporary buffer image to the image.
 
         // Zero-pad the image with required pixels to allow the convolution to reach the edges
-        int padPx = (kernel.length - 1) / 2;
-        FImage temp = image.padding(padPx, padPx, 0.0f);
+        int padHeightPx = (kernel.length - 1) / 2;
+        int padWidthPx = (kernel[0].length - 1) / 2;
+        FImage temp = image.padding(padWidthPx, padHeightPx, 0.0f);
 
         //Ensure the centre of the kernel is always within the pixels of the original image, not the padding.
-        for (int x=padPx; x<=(temp.width-(padPx+1)); x++) {
-            for (int y=padPx; y<=(temp.height-(padPx+1)); y++) {
+        for (int x=padWidthPx; x<=(temp.width-(padWidthPx+1)); x++) {
+            for (int y=padHeightPx; y<=(temp.height-(padHeightPx+1)); y++) {
                 float convolutionVal = calculateConvolution(temp, x, y);
                 temp.setPixel(x, y, convolutionVal);
             }
         }
 
-        DisplayUtilities.display(image);
-        DisplayUtilities.display(temp);
+        //Overwrite original image with our temp/buffer image
+        image.internalAssign(temp);
     }
 
     private float calculateConvolution(FImage image, int x, int y) {
@@ -43,17 +44,18 @@ public class MyConvolution implements SinglebandImageProcessor<Float, FImage> {
         float total = 0;
 
         int cent = (kernel.length-1) / 2;
-        int halfKernelLen = (kernel.length - 1) / 2;
+        int halfKernelHeightLen = (kernel.length - 1) / 2;
+        int halfKernelWidthLen = (kernel[0].length - 1) / 2;
 
         int kernelPos = 0;
 
 
-        for (int i=-halfKernelLen; i<=halfKernelLen; i++) {
-            for (int j=-halfKernelLen; j<=halfKernelLen; j++) {
+        for (int i=-halfKernelWidthLen; i<=halfKernelWidthLen; i++) {
+            for (int j=-halfKernelHeightLen; j<=halfKernelHeightLen; j++) {
                 int currX = x + i;
                 int currY = y + j;
-                int kernelX = kernelPos % kernel.length;
-                int kernelY = kernelPos / kernel.length;
+                int kernelX = kernelPos % kernel[0].length;
+                int kernelY = kernelPos / kernel[0].length;
                 //System.out.println("Kernel Pos: " + kernelX + "," + kernelY + ": " + kernel[kernelY][kernelX]);
                 //System.out.println("Current pixel val: " + image.getPixel(x, y));
                 total += kernel[kernelY][kernelX] * image.getPixel(currX, currY);

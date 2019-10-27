@@ -1,5 +1,6 @@
 package uk.ac.soton.ecs.ojvl1g17.hybridimages;
 
+import org.openimaj.image.DisplayUtilities;
 import org.openimaj.image.FImage;
 import org.openimaj.image.MBFImage;
 import org.openimaj.image.processing.convolution.Gaussian2D;
@@ -46,10 +47,11 @@ public class MyHybridImages {
             System.out.println(Arrays.toString(lowPassKernel[i]));
         }
 
+        DisplayUtilities.display(lowImage);
         //Perform low pass filtering convolution on first image
         MyConvolution lowPassConvolution = new MyConvolution(lowPassKernel);
-        lowImage.process(lowPassConvolution);
-
+        lowImage = lowImage.process(lowPassConvolution);
+        DisplayUtilities.display(lowImage);
         return null;
     }
 }
