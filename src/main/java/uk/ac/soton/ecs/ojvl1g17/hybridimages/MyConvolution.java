@@ -35,6 +35,9 @@ public class MyConvolution implements SinglebandImageProcessor<Float, FImage> {
             }
         }
 
+        //Remove padding as no longer required
+        temp = temp.padding(-padWidthPx, -padHeightPx);
+
         //Overwrite original image with our temp/buffer image
         image.internalAssign(temp);
     }

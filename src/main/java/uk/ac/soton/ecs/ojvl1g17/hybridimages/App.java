@@ -8,6 +8,7 @@ import org.openimaj.image.colour.RGBColour;
 import org.openimaj.image.processing.convolution.FGaussianConvolve;
 import org.openimaj.image.typography.hershey.HersheyFont;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -44,9 +45,21 @@ public class App {
         // Shuffle loaded images so image1 and image2 are randomly selected
         Collections.shuffle(images);
 
-        MBFImage image1 = images.get(0);
-        MBFImage image2 = images.get(1);
+        // Randomly select two images in the folder with the same width and height
+        MBFImage image1 = images.remove(0);
+        MBFImage image2 = null;
+        for (MBFImage img : images) {
+            if (img.getWidth() == image1.getWidth() && img.getHeight() == image1.getHeight()) {
+                image2 = img;
+            }
+        }
+        // If a corresponding image with the same width & height is not found, throw an exception
+        if (image2 == null) {
+            System.err.println("An image in the 'data' folder does not have a second image with the same resolution to make into a hybrid image.");
+            System.exit(1);
+        }
 
-        MyHybridImages.makeHybrid(image1, 4f, image2, 4f);
+        MBFImage hybridImage = MyHybridImages.makeHybrid(image1, 4f, image2, 4f);
+        DisplayUtilities.display(hybridImage);
     }
 }

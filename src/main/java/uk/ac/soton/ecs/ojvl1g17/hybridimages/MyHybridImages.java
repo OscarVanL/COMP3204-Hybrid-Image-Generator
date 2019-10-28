@@ -35,23 +35,43 @@ public class MyHybridImages {
         //image will also have the same height & width as the inputs.
 
         // === Code provided in CW specification, not my code ===
-        int size = (int) (8.0f * lowSigma + 1.0f);
+
+        // Generates low pass filtered version of lowImage
+        lowImage = generateLowPass(lowImage, lowSigma);
+
+        // Generates low pass filtered version of highImage - required to calculate the high passed image
+        MBFImage lowPassedComponent = generateLowPass(highImage, highSigma);
+        // Generates high pass filtered version of highImage
+        highImage = highImage.subtract(lowPassedComponent);
+
+        // Calculate the hybrid image
+        MBFImage hybridImage = lowImage.add(highImage);
+
+        return hybridImage;
+    }
+
+    /**
+     * Generates a low-pass filtered image from an input image and sigma value
+     * @param image Image to filter
+     * @param sigma Cutoff frequency control
+     * @return
+     */
+    public static MBFImage generateLowPass(MBFImage image, float sigma) {
+        int size = (int) (8.0f * sigma + 1.0f);
         if (size % 2 == 0) size++;
         System.out.println("Using Kernel of size " + size);
         // === (End of code not written by myself) ===
 
         //Generate Low-pass filter kernel
-        float[][] lowPassKernel = Gaussian2D.createKernelImage(size, lowSigma).pixels;
-        System.out.println("Generated kernel:");
+        float[][] lowPassKernel = Gaussian2D.createKernelImage(size, sigma).pixels;
         for (int i=0; i<lowPassKernel.length; i++) {
             System.out.println(Arrays.toString(lowPassKernel[i]));
         }
 
-        DisplayUtilities.display(lowImage);
         //Perform low pass filtering convolution on first image
         MyConvolution lowPassConvolution = new MyConvolution(lowPassKernel);
-        lowImage = lowImage.process(lowPassConvolution);
-        DisplayUtilities.display(lowImage);
-        return null;
+        image = image.process(lowPassConvolution);
+        return image;
     }
+
 }
