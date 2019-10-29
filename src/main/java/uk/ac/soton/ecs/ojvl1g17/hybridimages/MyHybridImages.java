@@ -1,14 +1,10 @@
 package uk.ac.soton.ecs.ojvl1g17.hybridimages;
 
-import org.openimaj.image.DisplayUtilities;
-import org.openimaj.image.FImage;
 import org.openimaj.image.MBFImage;
 import org.openimaj.image.processing.convolution.Gaussian2D;
 
-import java.util.Arrays;
-
 /**
- * @author Oscar van Leusen
+ * @author Oscar van Leusen, University of Southampton
  */
 public class MyHybridImages {
     /**
@@ -34,8 +30,6 @@ public class MyHybridImages {
         //Note that the input images are expected to have the same size, and the output
         //image will also have the same height & width as the inputs.
 
-        // === Code provided in CW specification, not my code ===
-
         // Generates low pass filtered version of lowImage
         lowImage = generateLowPass(lowImage, lowSigma);
 
@@ -46,7 +40,6 @@ public class MyHybridImages {
 
         // Calculate the hybrid image
         MBFImage hybridImage = lowImage.add(highImage);
-
         return hybridImage;
     }
 
@@ -57,16 +50,14 @@ public class MyHybridImages {
      * @return
      */
     public static MBFImage generateLowPass(MBFImage image, float sigma) {
+        // === This small section is not my code and is provided in CW specification ===
         int size = (int) (8.0f * sigma + 1.0f);
         if (size % 2 == 0) size++;
         System.out.println("Using Kernel of size " + size);
-        // === (End of code not written by myself) ===
+        // === End of code not written by myself ===
 
         //Generate Low-pass filter kernel
         float[][] lowPassKernel = Gaussian2D.createKernelImage(size, sigma).pixels;
-        for (int i=0; i<lowPassKernel.length; i++) {
-            System.out.println(Arrays.toString(lowPassKernel[i]));
-        }
 
         //Perform low pass filtering convolution on first image
         MyConvolution lowPassConvolution = new MyConvolution(lowPassKernel);
