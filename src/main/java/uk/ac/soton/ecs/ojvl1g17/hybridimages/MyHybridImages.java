@@ -1,7 +1,9 @@
 package uk.ac.soton.ecs.ojvl1g17.hybridimages;
 
+import org.openimaj.image.DisplayUtilities;
 import org.openimaj.image.MBFImage;
 import org.openimaj.image.processing.convolution.Gaussian2D;
+import org.openimaj.image.processing.resize.ResizeProcessor;
 
 /**
  * @author Oscar van Leusen, University of Southampton
@@ -63,6 +65,37 @@ public class MyHybridImages {
         MyConvolution lowPassConvolution = new MyConvolution(lowPassKernel);
         image = image.process(lowPassConvolution);
         return image;
+    }
+
+    /**
+     * Displays the cascading sized hybrid images to emphasise the hybrid image effect
+     * @param hybridImage Generated hybrid image
+     * @param cascadeAmount Amount of times to cascade (halve) the image by
+     */
+    public static void displayCascade(MBFImage hybridImage, int cascadeAmount) {
+        int requiredWidth = 0;
+        int widthBuff = hybridImage.getWidth();
+        for (int i=0; i<=cascadeAmount; i++) {
+            requiredWidth += widthBuff + 10;
+            widthBuff /= 2;
+        }
+
+        // Create a new larger MBFImage in order to contain the cascade of resized images
+        MBFImage canvas = new MBFImage(requiredWidth, hybridImage.getHeight());
+        // Draw the full size hybrid image
+        canvas.drawImage(hybridImage, 0, 0);
+
+        int horizontalOffset = hybridImage.getWidth() + 10;
+        ResizeProcessor resizeHalf = new ResizeProcessor(ResizeProcessor.Mode.HALF);
+        // Create 4 cascading sized hybrid images
+        for (int i=0; i<cascadeAmount; i++) {
+            hybridImage = hybridImage.process(resizeHalf);
+            canvas.drawImage(hybridImage, horizontalOffset, canvas.getHeight()-hybridImage.getHeight());
+            horizontalOffset += hybridImage.getWidth() + 10;
+        }
+
+        //Display overall hybrid image
+        DisplayUtilities.display(canvas);
     }
 
 }

@@ -93,7 +93,7 @@ public class App {
         }
 
         MBFImage hybridImage = MyHybridImages.makeHybrid(image1, (float) 4.0, image2, (float) 4.0);
-        displayCascade(hybridImage, 4);
+        MyHybridImages.displayCascade(hybridImage, 4);
     }
 
     /**
@@ -108,37 +108,6 @@ public class App {
         //Sigma1: How much high frequency to remove from first image. Sigma2: How much low frequency to leave in second
         MBFImage hybridImage = MyHybridImages.makeHybrid(putin, (float) 2.3, donald, (float) 4.0);
 
-        displayCascade(hybridImage, 4);
-    }
-
-    /**
-     * Displays the cascading sized hybrid images to emphasise the hybrid image effect
-     * @param hybridImage Generated hybrid image
-     * @param cascadeAmount Amount of times to cascade (halve) the image by
-     */
-    private static void displayCascade(MBFImage hybridImage, int cascadeAmount) {
-        int requiredWidth = 0;
-        int widthBuff = hybridImage.getWidth();
-        for (int i=0; i<=cascadeAmount; i++) {
-            requiredWidth += widthBuff + 10;
-            widthBuff /= 2;
-        }
-
-        // Create a new larger MBFImage in order to contain the cascade of resized images
-        MBFImage canvas = new MBFImage(requiredWidth, hybridImage.getHeight());
-        // Draw the full size hybrid image
-        canvas.drawImage(hybridImage, 0, 0);
-
-        int horizontalOffset = hybridImage.getWidth() + 10;
-        ResizeProcessor resizeHalf = new ResizeProcessor(ResizeProcessor.Mode.HALF);
-        // Create 4 cascading sized hybrid images
-        for (int i=0; i<cascadeAmount; i++) {
-            hybridImage = hybridImage.process(resizeHalf);
-            canvas.drawImage(hybridImage, horizontalOffset, canvas.getHeight()-hybridImage.getHeight());
-            horizontalOffset += hybridImage.getWidth() + 10;
-        }
-
-        //Display overall hybrid image
-        DisplayUtilities.display(canvas);
+        MyHybridImages.displayCascade(hybridImage, 4);
     }
 }
